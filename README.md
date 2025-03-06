@@ -56,6 +56,21 @@ This PowerShell-based support toolkit is designed to help IT technicians quickly
 ## Usage
 
 1. Open **PowerShell as Administrator**.
-2. If needed, temporarily bypass the execution policy:
-   ```powershell
-   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+2. If needed, temporarily bypass the execution policy: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+3. Run the script: ./RemoteSupportTool.ps1
+4. Follow the on-screen menu to select and run support tasks.
+
+## Logs
+
+Every action is automatically logged in a timestamped .txt file.
+The log file is saved in the same directory as the script.
+
+## Best Practices
+
+- Always run the script with administrator privileges.
+- Test the script in a controlled environment before using it in production.
+- Retain logs as part of your service documentation when needed.
+
+## License
+
+This project is licensed under the MIT License.
