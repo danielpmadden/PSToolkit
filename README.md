@@ -2,7 +2,7 @@
 
 ## Overview
 
-This PowerShell script is designed to assist IT technicians in providing remote desktop support. It offers a menu-driven interface to quickly perform common diagnostics, troubleshooting tasks, and basic system maintenance on Windows systems. The goal is to streamline support sessions by giving technicians direct access to essential tools in one place.
+This PowerShell script is designed to assist IT technicians in providing remote desktop support on Windows. It offers a menu-driven interface to quickly perform common diagnostics, troubleshooting tasks, and basic system maintenance on Windows systems. The goal is to streamline support sessions by giving technicians direct access to essential tools in one place.
 
 ---
 
