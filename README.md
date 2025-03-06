@@ -2,16 +2,16 @@
 
 ## Overview
 
-This PowerShell-based support toolkit is designed for IT technicians to efficiently perform diagnostics, maintenance, and troubleshooting during remote desktop sessions. It provides a simple, menu-driven interface with automatic audit logging and a self-cleaning mechanism that removes the script after use, ensuring no leftover files on the user's system.
+This PowerShell-based support toolkit is designed to help IT technicians quickly perform diagnostics, maintenance, and troubleshooting during remote desktop support sessions. The script provides a simple, menu-driven interface to run common tasks while logging all actions for audit purposes.
 
 ---
 
 ## Features
 
 ### Network Diagnostics
-- View IP configuration
-- Test network connectivity
-- Check internet access
+- Display IP configuration
+- Run ping tests
+- Check internet connectivity
 - Flush DNS resolver cache
 
 ### System Diagnostics
@@ -20,18 +20,20 @@ This PowerShell-based support toolkit is designed for IT technicians to efficien
 - Check for pending reboots
 
 ### Performance Monitoring
-- Display running processes
+- Display top running processes
 - Check disk space usage
-- View CPU and memory usage
+- Monitor CPU and memory usage
 
 ### Maintenance Tools
 - Restart the print spooler service
 - Clear temporary files
 - Retrieve the Windows Update log
+- Run Disk Cleanup
+- Defragment a selected drive
 
-### Additional Functions
-- Automatically logs all actions and outputs to a timestamped log file.
-- Self-deletes after execution to prevent leaving behind support tools on the system.
+### Additional
+- Logs all actions and outputs to a timestamped log file.
+- No installation required — run directly from any folder.
 
 ---
 
@@ -46,14 +48,14 @@ This PowerShell-based support toolkit is designed for IT technicians to efficien
 ## Installation
 
 1. Download the script.
-2. Copy the script to the target machine (e.g., `C:\SupportTools\`).
-3. (Optional) Review or customize the script as needed.
+2. Copy the script to the target machine (for example: `C:\SupportTools\`).
+3. (Optional) Review or customize the script before use.
 
 ---
 
 ## Usage
 
 1. Open **PowerShell as Administrator**.
-2. Bypass the execution policy if necessary:
+2. If needed, temporarily bypass the execution policy:
    ```powershell
    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
