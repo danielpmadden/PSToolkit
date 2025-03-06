@@ -1,4 +1,4 @@
-# PowerShell Remote Desktop Support Script (Enhanced)
+# PowerShell Remote Desktop Support Script (Enhanced & Ordered)
 
 $logPath = "$PSScriptRoot\SupportLog_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
 
@@ -21,7 +21,7 @@ function Run-Menu {
     )
     while ($true) {
         Write-Host "`n$title"
-        $options.Keys | ForEach-Object { Write-Host "$_." $options[$_].Description }
+        $options.Keys | ForEach-Object { Write-Host "$_. $($options[$_].Description)" }
         Write-Host "0. Back to Main Menu"
         $choice = Read-Host "Select an option"
         if ($choice -eq "0") { break }
@@ -40,7 +40,7 @@ function Run-Menu {
 }
 
 function Show-NetworkDiagnostics {
-    $options = @{
+    $options = [ordered]@{
         "1" = @{ Description = "IP Configuration"; Action = { ipconfig /all | Tee-Object -FilePath $logPath -Append } }
         "2" = @{ Description = "Ping Test"; Action = { $target = Read-Host "Enter IP or hostname"; Test-Connection $target -Count 4 | Tee-Object -FilePath $logPath -Append } }
         "3" = @{ Description = "Internet Connectivity"; Action = { Test-Connection -ComputerName 8.8.8.8 -Count 4 | Tee-Object -FilePath $logPath -Append } }
@@ -50,7 +50,7 @@ function Show-NetworkDiagnostics {
 }
 
 function Show-SystemDiagnostics {
-    $options = @{
+    $options = [ordered]@{
         "1" = @{ Description = "System Information"; Action = { systeminfo | Tee-Object -FilePath $logPath -Append } }
         "2" = @{ Description = "Recent System Errors"; Action = { Get-EventLog -LogName System -EntryType Error -Newest 10 | Format-Table | Tee-Object -FilePath $logPath -Append } }
         "3" = @{ Description = "Pending Reboot Check"; Action = { if (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -ErrorAction SilentlyContinue) { Write-Host "Reboot required." } else { Write-Host "No reboot required." } } }
@@ -59,7 +59,7 @@ function Show-SystemDiagnostics {
 }
 
 function Show-PerformanceMonitoring {
-    $options = @{
+    $options = [ordered]@{
         "1" = @{ Description = "Top Running Processes"; Action = { Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 Name, CPU, Id | Format-Table | Tee-Object -FilePath $logPath -Append } }
         "2" = @{ Description = "Disk Space Usage"; Action = { Get-PSDrive -PSProvider FileSystem | Format-Table | Tee-Object -FilePath $logPath -Append } }
         "3" = @{ Description = "CPU and Memory Usage"; Action = { Get-Counter '\Processor(_Total)\% Processor Time','\Memory\Available MBytes' | Select-Object -ExpandProperty CounterSamples | Tee-Object -FilePath $logPath -Append } }
@@ -68,7 +68,7 @@ function Show-PerformanceMonitoring {
 }
 
 function Show-MaintenanceTools {
-    $options = @{
+    $options = [ordered]@{
         "1" = @{ Description = "Restart Spooler Service"; Action = { Restart-Service -Name spooler -Force } }
         "2" = @{ Description = "Clear Temporary Files"; Action = { Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue } }
         "3" = @{ Description = "Retrieve Windows Update Log"; Action = { Get-WindowsUpdateLog | Tee-Object -FilePath $logPath -Append } }
