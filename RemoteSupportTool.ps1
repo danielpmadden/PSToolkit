@@ -1,6 +1,3 @@
-# PowerShell Remote Desktop Support Script
-# Author: [Your First and Last Name] - [Student ID]
-
 # Script designed for IT Technicians providing remote desktop support.
 
 # Main support menu loop
