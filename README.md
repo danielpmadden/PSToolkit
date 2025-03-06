@@ -2,7 +2,7 @@
 
 ## Overview
 
-This PowerShell script is designed to assist IT technicians in providing remote desktop support. It offers a menu-driven interface to quickly perform common diagnostics, troubleshooting tasks, and basic system maintenance on Windows systems. The goal is to streamline support sessions by giving technicians direct access to essential tools in one place.
+This PowerShell-based support toolkit is designed for IT technicians to efficiently perform diagnostics, maintenance, and troubleshooting during remote desktop sessions. It provides a simple, menu-driven interface with automatic audit logging and a self-cleaning mechanism that removes the script after use, ensuring no leftover files on the user's system.
 
 ---
 
@@ -22,34 +22,38 @@ This PowerShell script is designed to assist IT technicians in providing remote 
 ### Performance Monitoring
 - Display running processes
 - Check disk space usage
-- View CPU and memory statistics
+- View CPU and memory usage
 
 ### Maintenance Tools
 - Restart the print spooler service
 - Clear temporary files
 - Retrieve the Windows Update log
 
+### Additional Functions
+- Automatically logs all actions and outputs to a timestamped log file.
+- Self-deletes after execution to prevent leaving behind support tools on the system.
+
 ---
 
 ## Prerequisites
 
 - **Operating System**: Windows 10 or later
-- **PowerShell Version**: 5.1 or higher
-- **Permissions**: Administrator privileges are required for full functionality
+- **PowerShell**: Version 5.1 or higher
+- **Permissions**: Administrator privileges are required
 
 ---
 
 ## Installation
 
-1. Download the repository files.
-2. Place the script (`RemoteSupportTool.ps1`) in an accessible directory.
-3. (Optional) Review the script to customize or extend functionality.
+1. Download the script.
+2. Copy the script to the target machine (e.g., `C:\SupportTools\`).
+3. (Optional) Review or customize the script as needed.
 
 ---
 
 ## Usage
 
 1. Open **PowerShell as Administrator**.
-2. If the script is blocked due to execution policy, enter the following:
+2. Bypass the execution policy if necessary:
    ```powershell
    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
