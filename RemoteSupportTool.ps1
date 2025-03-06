@@ -1,4 +1,14 @@
+# PowerShell Remote Desktop Support Script
+# Author: Daniel Madden
+
 # Script designed for IT Technicians providing remote desktop support.
+
+$logPath = "$PSScriptRoot\SupportLog_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
+
+function Log-Action {
+    param ([string]$message)
+    "$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')) - $message" | Out-File -FilePath $logPath -Append
+}
 
 # Main support menu loop
 $continue = $true
@@ -11,6 +21,7 @@ while ($continue) {
     Write-Host "5. Exit"
 
     $mainChoice = Read-Host "Enter your choice (1-5)"
+    Log-Action "Main menu selection: $mainChoice"
 
     switch ($mainChoice) {
         "1" {
@@ -20,12 +31,13 @@ while ($continue) {
             Write-Host "  c. Check Internet Connectivity"
             Write-Host "  d. Flush DNS Resolver Cache"
             $subChoice = Read-Host "Select an option (a-d)"
+            Log-Action "Network Diagnostics selection: $subChoice"
 
             switch ($subChoice) {
-                "a" { ipconfig /all }
-                "b" { $address = Read-Host "Enter the IP or domain to ping"; Test-Connection $address -Count 4 }
-                "c" { Test-Connection -ComputerName 8.8.8.8 -Count 4 }
-                "d" { Clear-DnsClientCache; Write-Output "DNS cache flushed." }
+                "a" { ipconfig /all | Tee-Object -FilePath $logPath -Append }
+                "b" { $address = Read-Host "Enter the IP or domain to ping"; Log-Action "Ping target: $address"; Test-Connection $address -Count 4 | Tee-Object -FilePath $logPath -Append }
+                "c" { Test-Connection -ComputerName 8.8.8.8 -Count 4 | Tee-Object -FilePath $logPath -Append }
+                "d" { Clear-DnsClientCache; Log-Action "DNS cache flushed." }
             }
         }
         "2" {
@@ -34,11 +46,12 @@ while ($continue) {
             Write-Host "  b. View Recent System Error Logs"
             Write-Host "  c. Check for Pending Reboot"
             $subChoice = Read-Host "Select an option (a-c)"
+            Log-Action "System Diagnostics selection: $subChoice"
 
             switch ($subChoice) {
-                "a" { systeminfo | Out-String | Write-Output }
-                "b" { Get-EventLog -LogName System -EntryType Error -Newest 10 | Format-Table TimeGenerated, Source, Message -AutoSize }
-                "c" { $rebootRequired = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -ErrorAction SilentlyContinue; if ($rebootRequired) { Write-Output "A system reboot is pending." } else { Write-Output "No pending reboot detected." } }
+                "a" { systeminfo | Tee-Object -FilePath $logPath -Append }
+                "b" { Get-EventLog -LogName System -EntryType Error -Newest 10 | Format-Table | Tee-Object -FilePath $logPath -Append }
+                "c" { $rebootRequired = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -ErrorAction SilentlyContinue; if ($rebootRequired) { Log-Action "A system reboot is pending." } else { Log-Action "No pending reboot detected." } }
             }
         }
         "3" {
@@ -47,11 +60,12 @@ while ($continue) {
             Write-Host "  b. Check Disk Space Usage"
             Write-Host "  c. Basic CPU and Memory Usage"
             $subChoice = Read-Host "Select an option (a-c)"
+            Log-Action "Performance Monitoring selection: $subChoice"
 
             switch ($subChoice) {
-                "a" { Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 | Format-Table -AutoSize }
-                "b" { Get-PSDrive -PSProvider FileSystem | Format-Table Name, @{Label='Free(GB)';Expression={[math]::Round($_.Free/1GB,2)}}, @{Label='Used(GB)';Expression={[math]::Round(($_.Used)/1GB,2)}}, @{Label='Total(GB)';Expression={[math]::Round($_.Size/1GB,2)}} -AutoSize }
-                "c" { Get-CimInstance Win32_Processor | Select-Object Name, LoadPercentage; Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory }
+                "a" { Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 | Format-Table | Tee-Object -FilePath $logPath -Append }
+                "b" { Get-PSDrive -PSProvider FileSystem | Format-Table | Tee-Object -FilePath $logPath -Append }
+                "c" { Get-CimInstance Win32_Processor, Win32_OperatingSystem | Tee-Object -FilePath $logPath -Append }
             }
         }
         "4" {
@@ -60,15 +74,17 @@ while ($continue) {
             Write-Host "  b. Clear Temporary Files"
             Write-Host "  c. Check for Windows Updates"
             $subChoice = Read-Host "Select an option (a-c)"
+            Log-Action "Maintenance Tools selection: $subChoice"
 
             switch ($subChoice) {
-                "a" { Restart-Service -Name spooler -Force; Write-Output "Spooler service restarted." }
-                "b" { Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue; Write-Output "Temporary files cleared." }
-                "c" { Get-WindowsUpdateLog; Write-Output "Windows Update log retrieved." }
+                "a" { Restart-Service -Name spooler -Force; Log-Action "Spooler service restarted." }
+                "b" { Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue; Log-Action "Temporary files cleared." }
+                "c" { Get-WindowsUpdateLog | Tee-Object -FilePath $logPath -Append; Log-Action "Windows Update log retrieved." }
             }
         }
         "5" {
             Write-Output "Exiting support script."
+            Log-Action "Script exited."
             $continue = $false
         }
         default {
@@ -76,3 +92,8 @@ while ($continue) {
         }
     }
 }
+
+# Self-delete after completion
+Start-Sleep -Seconds 3
+Remove-Item -Path $MyInvocation.MyCommand.Definition -Force
+Log-Action "Script self-deleted."
