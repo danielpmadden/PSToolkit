@@ -60,7 +60,7 @@ function Show-MaintenanceTools {
     switch ($choice) {
         "1" { Restart-Service -Name spooler -Force; Log-Action "Restarted spooler service." }
         "2" { Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue; Log-Action "Cleared temporary files." }
-        "3" { Get-WindowsUpdateLog | Tee-Object -FilePath $logPath -Append; Log-Action "Retrieved Windows Update log." }
+        "3" { Get-WindowsUpdate -Install -AcceptAll -AutoReboot -FilePath $logPath -Append; Log-Action "Retrieved Windows Update." }
         "4" { Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait; Log-Action "Executed Disk Cleanup." }
         "5" { $drive = Read-Host "Enter drive letter (e.g., C:)"; defrag $drive -f | Tee-Object -FilePath $logPath -Append; Log-Action "Defragmented $drive." }
     }
