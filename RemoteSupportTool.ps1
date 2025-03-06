@@ -1,6 +1,7 @@
 # PowerShell Remote Desktop Support Script
 # Author: Daniel Madden
 
+$ErrorActionPreference = "Stop"
 $logPath = "$PSScriptRoot\SupportLog_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
 
 function Log-Action {
@@ -16,9 +17,9 @@ function Show-NetworkDiagnostics {
     Write-Host "4. Flush DNS Cache"
     $choice = Read-Host "Select an option (1-4)"
     switch ($choice) {
-        "1" { ipconfig /all | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed IP configuration." }
-        "2" { $target = Read-Host "Enter IP or hostname to ping"; Test-Connection $target -Count 4 | Tee-Object -FilePath $logPath -Append; Log-Action "Pinged $target." }
-        "3" { Test-Connection -ComputerName 8.8.8.8 -Count 4 | Tee-Object -FilePath $logPath -Append; Log-Action "Checked internet connectivity." }
+        "1" { ipconfig /all | Out-File -FilePath $logPath -Append; Log-Action "Displayed IP configuration." }
+        "2" { $target = Read-Host "Enter IP or hostname to ping"; Test-Connection $target -Count 4 | Out-String | Out-File -FilePath $logPath -Append; Log-Action "Pinged $target." }
+        "3" { Test-Connection -ComputerName 8.8.8.8 -Count 4 | Out-String | Out-File -FilePath $logPath -Append; Log-Action "Checked internet connectivity." }
         "4" { Clear-DnsClientCache; Log-Action "Flushed DNS cache." }
     }
 }
@@ -30,8 +31,8 @@ function Show-SystemDiagnostics {
     Write-Host "3. Pending Reboot Check"
     $choice = Read-Host "Select an option (1-3)"
     switch ($choice) {
-        "1" { systeminfo | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed system information." }
-        "2" { Get-EventLog -LogName System -EntryType Error -Newest 10 | Format-Table | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed recent system errors." }
+        "1" { systeminfo | Out-File -FilePath $logPath -Append; Log-Action "Displayed system information." }
+        "2" { Get-EventLog -LogName System -EntryType Error -Newest 10 | Out-String | Out-File -FilePath $logPath -Append; Log-Action "Displayed recent system errors." }
         "3" { if (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -ErrorAction SilentlyContinue) { Log-Action "Reboot required." } else { Log-Action "No reboot required." } }
     }
 }
@@ -43,9 +44,17 @@ function Show-PerformanceMonitoring {
     Write-Host "3. CPU and Memory Usage"
     $choice = Read-Host "Select an option (1-3)"
     switch ($choice) {
-        "1" { Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 | Format-Table | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed running processes." }
-        "2" { Get-PSDrive -PSProvider FileSystem | Format-Table | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed disk space usage." }
-        "3" { Get-CimInstance Win32_Processor, Win32_OperatingSystem | Tee-Object -FilePath $logPath -Append; Log-Action "Displayed CPU and memory usage." }
+        "1" { Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 | Out-String | Out-File -FilePath $logPath -Append; Log-Action "Displayed running processes." }
+        "2" { Get-PSDrive -PSProvider FileSystem | Out-String | Out-File -FilePath $logPath -Append; Log-Action "Displayed disk space usage." }
+        "3" {
+            try {
+                Get-CimInstance Win32_Processor, Win32_OperatingSystem | Out-String | Out-File -FilePath $logPath -Append
+                Log-Action "Displayed CPU and memory usage."
+            } catch {
+                Write-Warning "Failed to retrieve CPU and memory usage: $_"
+                Log-Action "Failed to retrieve CPU and memory usage."
+            }
+        }
     }
 }
 
@@ -59,10 +68,27 @@ function Show-MaintenanceTools {
     $choice = Read-Host "Select an option (1-5)"
     switch ($choice) {
         "1" { Restart-Service -Name spooler -Force; Log-Action "Restarted spooler service." }
-        "2" { Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue; Log-Action "Cleared temporary files." }
-        "3" { Get-WindowsUpdate -Install -AcceptAll -AutoReboot -FilePath $logPath -Append; Log-Action "Retrieved Windows Update." }
+        "2" {
+            try {
+                $deletedFiles = Get-ChildItem -Path "$env:TEMP" -Recurse -ErrorAction SilentlyContinue | Measure-Object | Select-Object -ExpandProperty Count
+                Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
+                Log-Action "Cleared $deletedFiles temporary files."
+            } catch {
+                Log-Action "Failed to clear temporary files: $_"
+            }
+        }
+        "3" {
+            if (Get-Module -ListAvailable -Name PSWindowsUpdate) {
+                Import-Module PSWindowsUpdate
+                Get-WindowsUpdate -Install -AcceptAll -AutoReboot | Out-String | Out-File -FilePath $logPath -Append
+                Log-Action "Retrieved and installed Windows Updates."
+            } else {
+                Write-Warning "PSWindowsUpdate module not installed."
+                Log-Action "Windows Update check skipped - module missing."
+            }
+        }
         "4" { Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -Wait; Log-Action "Executed Disk Cleanup." }
-        "5" { $drive = Read-Host "Enter drive letter (e.g., C:)"; defrag $drive -f | Tee-Object -FilePath $logPath -Append; Log-Action "Defragmented $drive." }
+        "5" { $drive = Read-Host "Enter drive letter (e.g., C:)"; defrag $drive -f | Out-File -FilePath $logPath -Append; Log-Action "Defragmented $drive." }
     }
 }
 
