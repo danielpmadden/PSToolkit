@@ -1,5 +1,16 @@
-# PowerShell Support Toolkit
-# Author: Daniel Madden
+<#
+.SYNOPSIS
+    PowerShell Support Toolkit for common diagnostics, performance monitoring, and maintenance tasks.
+
+.DESCRIPTION
+    This toolkit provides an interactive menu to execute various system checks, repairs, and updates. 
+    It features modular functions, robust error handling, input validation, and logging for troubleshooting
+    and maintaining Windows systems.
+
+.NOTES
+    Author: Daniel Madden  
+    Version: 2.0  
+#>
 
 $ErrorActionPreference = "Stop"
 $logPath = "$PSScriptRoot\SupportLog_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
