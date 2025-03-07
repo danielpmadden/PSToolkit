@@ -2,7 +2,7 @@
 
 ## Overview
 
-A modular PowerShell support toolkit designed to perform remote desktop support tasks efficiently. Includes automated logging and a menu-driven interface for diagnostics and maintenance.
+A modular PowerShell support toolkit designed to perform remote desktop support tasks efficiently. Includes automated logging and a menu-driven interface for diagnostics and maintenance
 
 ## Features
 
