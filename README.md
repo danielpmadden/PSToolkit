@@ -57,7 +57,7 @@ This PowerShell-based support toolkit is designed to help IT technicians quickly
 
 1. Open **PowerShell as Administrator**.
 2. If needed, temporarily bypass the execution policy: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-3. Run the script: ./RemoteSupportTool.ps1
+3. Run the script: ./PowerShellSupportToolkit.ps1
 4. Follow the on-screen menu to select and run support tasks.
 
 ---
