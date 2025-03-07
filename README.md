@@ -60,16 +60,22 @@ This PowerShell-based support toolkit is designed to help IT technicians quickly
 3. Run the script: ./RemoteSupportTool.ps1
 4. Follow the on-screen menu to select and run support tasks.
 
+---
+
 ## Logs
 
 Every action is automatically logged in a timestamped .txt file.
 The log file is saved in the same directory as the script.
+
+---
 
 ## Best Practices
 
 - Always run the script with administrator privileges.
 - Test the script in a controlled environment before using it in production.
 - Retain logs as part of your service documentation when needed.
+
+---
 
 ## License
 
