@@ -2,7 +2,7 @@
 
 ## Overview
 
-This PowerShell-based support toolkit is designed to help IT technicians quickly perform diagnostics, maintenance, and troubleshooting during remote desktop support sessions. The script provides a simple, menu-driven interface to run common tasks while logging all actions for audit purposes.
+A modular PowerShell support toolkit designed to perform remote desktop support tasks efficiently. Includes automated logging and a menu-driven interface for diagnostics and maintenance.
 
 ---
 
