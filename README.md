@@ -1,4 +1,4 @@
-# Remote Desktop Support Toolkit
+# Windows PowerShell Support Toolkit
 
 ## Overview
 
