@@ -1,4 +1,4 @@
-# Windows PowerShell Support Toolkit
+# PowerShell Support Toolkit
 
 ## Overview
 
