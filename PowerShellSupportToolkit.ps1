@@ -1,4 +1,4 @@
-# PowerShell Remote Desktop Support Script
+# PowerShell Support Toolkit
 # Author: Daniel Madden
 
 $ErrorActionPreference = "Stop"
