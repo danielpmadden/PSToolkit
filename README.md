@@ -1,6 +1,6 @@
 # PSToolkit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![PowerShell 5.1+ / 7+](https://img.shields.io/badge/PowerShell-5.1%20%2B%20%7C%207%20%2B-5391FE?logo=powershell)](#installation) 
+[![PowerShell 5.1+ / 7+](https://img.shields.io/badge/PowerShell-5.1%20%2B%20%7C%207%20%2B-5391FE?logo=powershell)] [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) 
 > **TL;DR:** PSToolkit is a menu-driven Windows PowerShell toolkit that accelerates remote desktop support by combining diagnostics, performance checks, and routine maintenance with automated logging and structured exports.
 
 ---
