@@ -5,20 +5,6 @@
 
 ---
 
-## Demo
-
-> Visuals coming soon — replace the placeholders below with live assets from `docs/`.
-
-![Animated walkthrough of the PSToolkit menu](docs/demo.gif)
-
-| Screenshot | Description |
-| --- | --- |
-| ![Toolkit main menu](docs/menu.png) | Menu-driven interface for all support actions. |
-| ![Diagnostics output](docs/diagnostics.png) | Consolidated diagnostics with timestamped log capture. |
-| ![JSON export sample](docs/json-export.png) | Structured JSON export ready for ticketing systems. |
-
----
-
 ## Features
 
 - [x] Guided, keyboard-driven workflow for support engineers
