@@ -16,6 +16,19 @@ $logPath = "$PSScriptRoot\Outputs\Logs\SupportLog_$timestamp.txt"
 # Define directory for JSON outputs to store structured results.
 $jsonPath = "$PSScriptRoot\Outputs\Json"
 
+# Ensure output directories exist before any data is written.
+$logDirectory = Split-Path -Path $logPath -Parent
+$jsonDirectory = $jsonPath
+
+# Iterate through each required directory so we can validate its existence individually.
+foreach ($directory in @($logDirectory, $jsonDirectory)) {
+    # Only create directories that are missing to avoid unnecessary filesystem operations.
+    if (-not (Test-Path -Path $directory)) {
+        # Force the directory creation to handle nested paths and suppress output for a clean console.
+        New-Item -Path $directory -ItemType Directory -Force | Out-Null
+    }
+}
+
 <# 
     Log-Action
     Records timestamped actions to a session log to provide a traceable history of operations.
