@@ -1,7 +1,6 @@
 # PSToolkit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![PowerShell 5.1+ / 7+](https://img.shields.io/badge/PowerShell-5.1%20%2B%20%7C%207%20%2B-5391FE?logo=powershell)](#installation) [![Last Commit](https://img.shields.io/github/last-commit/your-org/PSToolkit.svg)](https://github.com/your-org/PSToolkit/commits/main) [![Latest Release](https://img.shields.io/github/v/tag/your-org/PSToolkit.svg)](https://github.com/your-org/PSToolkit/releases)
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![PowerShell 5.1+ / 7+](https://img.shields.io/badge/PowerShell-5.1%20%2B%20%7C%207%20%2B-5391FE?logo=powershell)](#installation) 
 > **TL;DR:** PSToolkit is a menu-driven Windows PowerShell toolkit that accelerates remote desktop support by combining diagnostics, performance checks, and routine maintenance with automated logging and structured exports.
 
 ---
@@ -297,8 +296,4 @@ See full history in [Git tags](https://github.com/your-org/PSToolkit/tags).
 : In `Outputs/Logs` by default, or in the folder specified by `-LogPath`.
 
 **How do I run headless?**
-: Use non-interactive mode with `-Action` and optional `-ExportJson` flags in scheduled tasks or remote scripts.
-
----
-
-Need help? Open an issue or start a discussion on [GitHub](https://github.com/your-org/PSToolkit/discussions).
+: Use non-interactive mode with `-Action` and optional `-ExportJson` flags in scheduled tasks. 
