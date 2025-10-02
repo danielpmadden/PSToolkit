@@ -49,12 +49,12 @@ A PowerShell support toolkit designed to perform remote desktop support tasks ef
 
 1. Open **PowerShell as Administrator**.
 2. If needed, temporarily bypass the execution policy: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-3. Run the script: ./PowerShellSupportToolkit.ps1
+3. Run the script: ./PSToolkit.ps1
 4. Follow the on-screen menu to select and run support tasks.
 
 ## Logs
 
-Every action is automatically logged in a timestamped .txt file. The log file is saved in the same directory as the script.
+Every action is automatically logged in a timestamped .txt file. The script automatically creates an `Outputs` folder alongside the script on first run. Log files are stored in `Outputs/Logs` and JSON data exports are written to `Outputs/Json`.
 
 ## License
 
