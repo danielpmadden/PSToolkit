@@ -163,9 +163,9 @@ flowchart TD
 
 ## Permissions & Safety
 
-- 🔒 **Administrator required** for maintenance tasks that modify services, registry, or system files.
-- 📄 **Read-only operations** (diagnostics, performance snapshots) can run as standard users.
-- 🛡️ **EDR/AV compatibility:** PSToolkit performs signed script verification, avoids inline binaries, and logs every privileged operation to support security reviews.
+- **Administrator required** for maintenance tasks that modify services, registry, or system files.
+- **Read-only operations** (diagnostics, performance snapshots) can run as standard users.
+- **EDR/AV compatibility:** PSToolkit performs signed script verification, avoids inline binaries, and logs every privileged operation to support security reviews.
 
 ---
 
