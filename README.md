@@ -239,32 +239,6 @@ Describe "PSToolkit Action Selection" {
 
 ---
 
-## Changelog
-
-### v1.3.0 — 2023-09-18
-
-- Added JSON export toggles and schema validation.
-- Introduced maintenance automation sub-menu with WhatIf support.
-- Improved log rotation with archive compression.
-
-See full history in [Git tags](https://github.com/your-org/PSToolkit/tags).
-
----
-
-## Contributing
-
-1. Fork the repository and create a feature branch (`feat/short-description`).
-2. Follow the **Conventional Commits** spec (`feat:`, `fix:`, `docs:`).
-3. Run `Invoke-Pester` before submitting a PR.
-4. Open a pull request with:
-   - Summary of changes
-   - Testing evidence
-   - Any security considerations
-
-> Code style: Favor advanced functions, parameter validation attributes, and splatting for readability.
-
----
-
 ## License & Acknowledgments
 
 - Licensed under the [MIT License](LICENSE).
