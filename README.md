@@ -1,259 +1,102 @@
 # PSToolkit
 
-![PowerShell 5.1+ / 7+](https://img.shields.io/badge/PowerShell-5.1%20%2B%20%7C%207%20%2B-5391FE?logo=powershell) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) 
-> **TL;DR:** PSToolkit is a menu-driven Windows PowerShell toolkit that accelerates remote desktop support by combining diagnostics, performance checks, and routine maintenance with automated logging and structured exports.
+Author: Daniel Madden
 
----
+## Overview
+PSToolkit is an interactive PowerShell script that streamlines common help desk diagnostics and maintenance activities on Windows workstations. The script guides operators through targeted menus for network checks, system triage, performance monitoring, and basic remediation steps while recording a full activity log and optional JSON exports for later review.
 
-## Features
+The repository currently ships as a single script (`PSToolkit.ps1`) with no external module dependencies. This audit focuses on improving documentation, quality guardrails, and repository hygiene without modifying the functional code paths.
 
-- [x] Guided, keyboard-driven workflow for support engineers
-- [x] Automated transcript logging with rotation safeguards
-- [x] Optional JSON exports for incident documentation
-- [x] Cross-version support for Windows PowerShell 5.1 and PowerShell 7+
-- [x] Graceful error handling with actionable exit codes
+## Key Features
+- Interactive console menus for network diagnostics, system health inspection, performance snapshots, and maintenance operations.
+- Automatic session logging to `Outputs/Logs` with timestamps for traceability.
+- Optional JSON exports under `Outputs/Json` for structured reporting and downstream analysis.
+- Administrator check (`Ensure-Administrator`) to prevent privileged actions from running without elevation.
+- Modular helper functions (`Log-Action`, `Write-JsonOutput`, `Get-ValidatedChoice`) that centralize reusable behavior within the script.
 
-### Action Matrix
-
-| Action | What it does | Logs / JSON fields produced | Estimated run time |
-| --- | --- | --- | --- |
-| **Network Diagnostics** | Captures IP config, gateway reachability, DNS resolution tests. | `network.ipv4`, `network.ipv6`, `network.gateway`, `network.dnsTests[]`. | 30–60 seconds |
-| **System Health Check** | Retrieves OS build, uptime, pending reboots, critical events. | `system.osVersion`, `system.uptimeMinutes`, `system.pendingReboot`, `events.critical[]`. | 20–40 seconds |
-| **Performance Snapshot** | Samples CPU, memory, disk queue, and top processes. | `performance.cpuLoad`, `performance.memoryUsage`, `performance.topProcesses[]`. | 15–30 seconds |
-| **Maintenance Toolkit** | Offers cache cleanup, spooler reset, Windows Update log retrieval. | `maintenance.actions[]`, `maintenance.results[]`. | 1–3 minutes (depends on selected task) |
-| **Custom Script Runner** | Executes predefined remediation scripts from `scripts/`. | `scripts.name`, `scripts.status`, `scripts.output`. | Varies by script |
-
----
+## Requirements
+- Windows PowerShell 5.1 or PowerShell 7.0+ on Windows.
+- Local administrative rights for maintenance actions such as restarting services, clearing temporary files, and launching Disk Cleanup.
+- Sufficient disk space on the host for log and JSON export directories created at runtime.
 
 ## Installation
+1. **Clone the repository**
+   ```powershell
+   git clone https://github.com/your-org/PSToolkit.git
+   cd PSToolkit
+   ```
+2. **Review execution policy** (if not already permitting local scripts)
+   ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+   ```
+3. **Verify PowerShell version**
+   ```powershell
+   $PSVersionTable.PSVersion
+   ```
 
-### 1. Prepare Execution Policy
+> Restore your organization’s preferred execution policy after confirming PSToolkit runs as expected.
 
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
+## Quick Start
+1. Launch PowerShell with administrative rights when you intend to run maintenance tasks.
+2. Navigate to the cloned repository directory.
+3. Execute the script:
+   ```powershell
+   .\PSToolkit.ps1
+   ```
+4. Follow the on-screen prompts to select diagnostic or maintenance actions. Logs and JSON exports are created automatically.
 
-> Revert after installation if your organization mandates stricter policies.
-
-### 2. Choose Your PowerShell Engine
-
-- **Windows PowerShell 5.1** (built into Windows 10/11). Fully supported, requires .NET Framework.
-- **PowerShell 7+** (cross-platform). Recommended for modern environments; unlocks faster remoting and updated cmdlets.
-
-> PSToolkit auto-detects the host version and adapts menu rendering and JSON serialization accordingly.
-
-### 3. Download PSToolkit
-
-**Option A – Clone the repo**
-
-```powershell
-git clone https://github.com/your-org/PSToolkit.git
-cd PSToolkit
-```
-
-**Option B – Download a release ZIP**
-
-1. Visit [GitHub Releases](https://github.com/your-org/PSToolkit/releases).
-2. Download the latest `PSToolkit.zip`.
-3. Extract to a working directory, e.g., `C:\Tools\PSToolkit`.
-
----
-
-## Quickstart
-
-1. Launch a PowerShell console (5.1 or 7+). Run as Administrator if you plan to execute privileged actions.
-2. Navigate to the extracted toolkit directory.
-3. Start the menu:
-
-```powershell
-.\PSToolkit.ps1
-```
-
-### Interactive Session
-
+### Example Session
 ```text
-=== PSToolkit ===
-1) Network Diagnostics
-2) System Health Check
-3) Performance Snapshot
-4) Maintenance Toolkit
-5) Export JSON Report
-Q) Quit
-Select an option: 1
+Select a support option:
+1. Network Diagnostics
+2. System Diagnostics
+3. Performance Monitoring
+4. Maintenance Tools
+5. Exit
+Enter your choice (1-5): 1
 ```
 
-### Non-Interactive Mode
+### Output Locations
+- Logs: `Outputs/Logs/SupportLog_<timestamp>.txt`
+- JSON exports: `Outputs/Json/*.json`
 
-Use flags to run a single action and exit:
+## Troubleshooting and Support
+| Issue | Resolution |
+| --- | --- |
+| Execution policy prevents script launch | Run the installation step above to set `RemoteSigned`, then retry. |
+| Log files fail to write | Confirm the current user has write access to the repository directory or set PowerShell to run as Administrator. |
+| Maintenance actions warn about privileges | Rerun PowerShell as Administrator; the script exits early without elevation. |
+| Windows Update check warning appears | Install the optional [PSWindowsUpdate](https://www.powershellgallery.com/packages/PSWindowsUpdate) module or skip the menu item. |
 
-```powershell
-.\PSToolkit.ps1 -Action NetworkDiagnostics -ExportJson -JsonPath .\Outputs\Reports\netdiag.json -Verbose
-```
+For additional support or to report issues, open a ticket in the repository issue tracker with log excerpts and the selected menu path.
 
----
-
-## Usage Details
-
-### Menu Flow
-
-```mermaid
-flowchart TD
-    Start([Launch PSToolkit]) --> Menu{Select Action}
-    Menu -->|1| NetDiag[Network Diagnostics]
-    Menu -->|2| SysHealth[System Health Check]
-    Menu -->|3| PerfSnap[Performance Snapshot]
-    Menu -->|4| Maintenance[Maintenance Toolkit]
-    Menu -->|5| Export[Export JSON Report]
-    NetDiag --> Logs[Write Logs]
-    SysHealth --> Logs
-    PerfSnap --> Logs
-    Maintenance --> Logs
-    Export --> Logs
-    Logs --> Menu
-    Menu -->|Q| Exit((Exit))
-```
-
-### Command-Line Flags
-
-| Flag | Type | Default | Description |
-| --- | --- | --- | --- |
-| `-Action` | `string` | `""` | Optional. Specify an action key (`NetworkDiagnostics`, `SystemHealth`, `Performance`, `Maintenance`, `ExportJson`). |
-| `-ExportJson` | `switch` | `False` | Toggle JSON export for the current run. |
-| `-JsonPath` | `string` | `Outputs\Reports\PSToolkit.json` | Target path for JSON export. Creates folders as needed. |
-| `-LogPath` | `string` | `Outputs\Logs` | Custom directory for log output. |
-| `-ConfigPath` | `string` | `config.json` | Alternative configuration file. |
-| `-Verbose` | `switch` | `False` | Enable verbose logging for troubleshooting. |
-| `-WhatIf` | `switch` | `False` | Simulate actions without applying system changes (where supported). |
-
-### JSON Export Schema
-
-```jsonc
-{
-  "runId": "2023-09-21T19-04-55Z",
-  "host": {
-    "computerName": "WORKSTATION-01",
-    "userName": "contoso\\jdoe",
-    "powerShellVersion": "7.3.3"
-  },
-  "actions": [
-    {
-      "name": "NetworkDiagnostics",
-      "status": "Success",
-      "durationSeconds": 52,
-      "output": {
-        "ipv4": "192.168.1.25",
-        "gatewayReachable": true,
-        "dnsTests": [
-          { "target": "contoso.com", "latencyMs": 31 },
-          { "target": "8.8.8.8", "latencyMs": 18 }
-        ]
-      }
-    }
-  ]
-}
-```
-
-### Log Files
-
-- **Default location:** `Outputs/Logs/<timestamp>-PSToolkit.log`
-- **Rotation:** The last 20 logs are preserved. Older logs are zipped into `Outputs/Logs/archive/` with the pattern `<timestamp>.zip`.
-- **Transcript:** A PowerShell transcript (`Outputs/Logs/<timestamp>-transcript.txt`) is created for each session when run interactively.
-
----
-
-## Permissions & Safety
-
-- **Administrator required** for maintenance tasks that modify services, registry, or system files.
-- **Read-only operations** (diagnostics, performance snapshots) can run as standard users.
-- **EDR/AV compatibility:** PSToolkit performs signed script verification, avoids inline binaries, and logs every privileged operation to support security reviews.
-
----
-
-## Configuration
-
-If a `config.json` file is present in the root directory, PSToolkit will merge settings in the following order (higher wins):
-
-1. CLI flags
-2. `config.local.json` (optional, machine-specific overrides)
-3. `config.json`
-
-Example configuration:
-
-```json
-{
-  "defaultAction": "SystemHealth",
-  "logRetention": 20,
-  "maintenance": {
-    "cleanupTemp": true,
-    "spoolerReset": false
-  }
-}
-```
-
----
-
-## Logging & Troubleshooting
-
-- **Verbose mode:** `-Verbose` adds granular progress records and any caught exceptions.
-- **Exit codes:** `0` (success), `1` (handled error), `2` (unhandled exception), `3` (privilege escalation required).
-- **Common errors:**
-  - *Execution policy blocks script*: Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
-  - *Access denied to log directory*: Use `-LogPath` with a writeable location or run with elevated rights.
-  - *JSON export fails*: Ensure the target directory exists or supply `-JsonPath` with a valid path.
-
----
+## Development Notes
+- The codebase currently consists of a single script. Future refactors should consider extracting reusable logic into a PowerShell module to improve testability.
+- Repository automation now includes linting guidance via GitHub Actions (see `.github/workflows/lint.yml`).
+- Planned test coverage will use [Pester](https://pester.dev/). Place future tests under the `tests/` directory.
+- Run static analysis locally with `Invoke-ScriptAnalyzer -Path .` after installing `PSScriptAnalyzer`.
 
 ## Testing
-
-PSToolkit uses [Pester](https://pester.dev/) for unit and integration coverage.
-
+While automated tests are not yet implemented, contributors can prepare the environment with the following commands:
+```powershell
+Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+Invoke-ScriptAnalyzer -Path .\PSToolkit.ps1
+```
+Add Pester tests as they are developed:
 ```powershell
 Invoke-Pester -Path .\tests -Output Detailed
 ```
 
-Sample test (add to `tests/PSToolkit.Tests.ps1`):
+## Security and Compliance
+- Input prompts for ping targets and defragmentation accept raw user input. Validate entries manually before confirming operations.
+- Clearing temporary files and launching Disk Cleanup or defragmentation may affect end-user workloads; communicate scheduled maintenance windows.
+- Recommended security tooling: PSScriptAnalyzer for linting, secret scanning via GitHub Advanced Security (if available), and Just Enough Administration (JEA) policies for production environments.
 
-```powershell
-Describe "PSToolkit Action Selection" {
-    It "invokes Network Diagnostics action" {
-        $result = .\PSToolkit.ps1 -Action NetworkDiagnostics -WhatIf
-        $result.Status | Should -Be "Simulated"
-    }
-}
-```
+## Dependency Overview
+A high-level view of repository contents is maintained in [`docs/DEPENDENCY_OVERVIEW.md`](docs/DEPENDENCY_OVERVIEW.md). Update this document when new modules, scripts, or documentation directories are added.
 
-> **TODO:** Expand coverage for maintenance scripts and JSON schema validation.
+## License
+This project is licensed under the [MIT License](LICENSE).
 
----
-
-## Roadmap
-
-1. Offline artifact collection bundle.
-2. Pluggable credential vault integration (DPAPI / SecretManagement).
-3. Remote session orchestration via PowerShell remoting.
-4. Centralized log shipping to Azure Log Analytics.
-5. Health score summary dashboard (HTML report).
-6. Self-update module using GitHub Releases API.
-7. Interactive transcript viewer (Out-GridView or Terminal-UI).
-8. Localization support for menu labels.
-
----
-
-## License & Acknowledgments
-
-- Licensed under the [MIT License](LICENSE).
-- Built on Windows PowerShell 5.1+ and PowerShell 7+.
-- Inspired by field experiences from remote desktop support engineers.
-
----
-
-## FAQ
-
-**Will this change system settings?**
-: Only maintenance tasks with explicit confirmation modify system services or files. Diagnostics are read-only.
-
-**Where are logs stored?**
-: In `Outputs/Logs` by default, or in the folder specified by `-LogPath`.
-
-**How do I run headless?**
-: Use non-interactive mode with `-Action` and optional `-ExportJson` flags in scheduled tasks. 
+## Credits
+Created and maintained by Daniel Madden. Contributions are welcome via pull requests that include updated documentation and lint results.

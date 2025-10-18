@@ -1,0 +1,46 @@
+name: Lint and Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    name: PowerShell lint and audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Run Invoke-ScriptAnalyzer
+        shell: pwsh
+        run: |
+          Import-Module PSScriptAnalyzer
+          $results = Invoke-ScriptAnalyzer -Path ./PSToolkit.ps1 -Recurse
+          if ($results) {
+            Write-Host "PSScriptAnalyzer findings:" -ForegroundColor Yellow
+            $results | Format-Table -AutoSize
+          } else {
+            Write-Host "No lint findings detected." -ForegroundColor Green
+          }
+
+      - name: Simulated security audit
+        shell: pwsh
+        run: |
+          Write-Host "Security audit checklist:" -ForegroundColor Cyan
+          Write-Host " - Run Invoke-ScriptAnalyzer locally for remediation guidance."
+          Write-Host " - Enable repository secret scanning and code scanning tools."
+          Write-Host " - Validate maintenance commands (defrag, cleanmgr) with input sanitization before release."
+
+      - name: Test placeholder
+        shell: pwsh
+        run: |
+          Write-Host "No automated Pester tests are defined yet. Add tests under ./tests as they are developed."
