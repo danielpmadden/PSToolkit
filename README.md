@@ -1,7 +1,5 @@
 # PSToolkit
 
-Author: Daniel Madden
-
 ## Overview
 PSToolkit is an interactive PowerShell script that streamlines common help desk diagnostics and maintenance activities on Windows workstations. The script guides operators through targeted menus for network checks, system triage, performance monitoring, and basic remediation steps while recording a full activity log and optional JSON exports for later review.
 
