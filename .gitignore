@@ -1,32 +1,18 @@
-# Windows system files
-Thumbs.db
-Desktop.ini
-
-# PowerShell-related files
-*.ps1~
-*.psm1~
-*.psd1~
+# PSToolkit gitignore
+Outputs/
+Output/
 *.log
-
-# User-specific files
-*.tmp
-*.bak
-*.swp
-
-# VSCode or IDE settings (if using)
-.vscode/
-.idea/
-*.code-workspace
-
-# macOS system files (if transferred from Mac)
-.DS_Store
-
-# Node/NPM or Python (if added later)
-node_modules/
-venv/
-.env
-
-# Archive files
 *.zip
-*.tar.gz
-*.rar
+*.cache
+*.bak
+*.tmp
+*.ps1~
+*.ps1.tmp
+.DS_Store
+Thumbs.db
+# Pester test results
+TestResults/
+# PowerShell module artifacts
+*.nupkg
+*.psd1
+*.psm1
